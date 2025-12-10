@@ -1,4 +1,5 @@
 import { useConnection } from "wagmi";
+import { BlockieAvatar } from "./web3/blockie-avatar";
 
 export const AccountInfo = () => {
   const { address, isConnected, chain } = useConnection();
@@ -10,6 +11,7 @@ export const AccountInfo = () => {
       </p>
       <p>wagmi address: {address}</p>
       <p>wagmi network: {chain?.id}</p>
+      {address && <BlockieAvatar address={address}/>}
     </div>
   );
 }
