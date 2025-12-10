@@ -1,3 +1,4 @@
+'use client";'
 import { useConnection } from "wagmi";
 import { BlockieAvatar } from "./web3/blockie-avatar";
 

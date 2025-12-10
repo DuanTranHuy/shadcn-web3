@@ -1,4 +1,3 @@
-"use client";
 import { AccountInfo } from "@/components/AccountInfo";
 import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
 
