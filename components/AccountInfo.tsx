@@ -4,7 +4,6 @@ import { BlockieAvatar } from "./web3/blockie-avatar";
 
 export const AccountInfo = () => {
   const { address, isConnected, chain } = useConnection();
-
   return (
     <div>
       <p>
