@@ -1,4 +1,4 @@
-import { AccountInfo } from "@/components/AccountInfo";
+import { AccountInfo } from "@/components/account-info";
 import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
 
 export default function Home() {

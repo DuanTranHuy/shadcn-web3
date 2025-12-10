@@ -1,6 +1,9 @@
 "use client";
 
 import * as React from "react";
+import { useEnsName, useEnsAvatar } from "wagmi";
+import { mainnet } from "viem/chains";
+import { normalize } from "viem/ens";
 import { Check, Copy, ExternalLink } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
@@ -49,14 +52,13 @@ const iconSizeMap: Record<NonNullable<VariantProps<typeof addressVariants>["size
 
 type AddressProps = VariantProps<typeof addressVariants> & {
   address?: `0x${string}`;
-  ensName?: string;
-  ensAvatar?: string;
   format?: "short" | "long";
   disableAddressLink?: boolean;
   disableCopy?: boolean;
+  disableEns?: boolean;
+  ensChainId?: number;
   showAvatar?: boolean;
   blockExplorerUrl?: string;
-  isLoading?: boolean;
   className?: string;
 };
 
@@ -139,19 +141,36 @@ function AddressLinkWrapper({
 
 function Address({
   address,
-  ensName,
-  ensAvatar,
   format = "short",
   size = "base",
   disableAddressLink = false,
   disableCopy = false,
+  disableEns = false,
+  ensChainId = mainnet.id,
   showAvatar = true,
   blockExplorerUrl,
-  isLoading = false,
   className,
 }: AddressProps) {
+  const { data: ensName, isLoading: ensNameLoading } = useEnsName({
+    address,
+    chainId: ensChainId,
+    query: {
+      enabled: !!address && !disableEns,
+    },
+  });
+
+  const { data: ensAvatar, isLoading: ensAvatarLoading } = useEnsAvatar({
+    name: ensName ? normalize(ensName) : undefined,
+    chainId: ensChainId,
+    query: {
+      enabled: !!ensName && !disableEns,
+    },
+  });
+
   const iconSize = iconSizeMap[size ?? "base"];
   const avatarSize = avatarSizeMap[size ?? "base"];
+
+  const isLoading = ensNameLoading || (ensName && ensAvatarLoading);
 
   if (isLoading) {
     return (
@@ -180,7 +199,7 @@ function Address({
       {showAvatar && (
         <BlockieAvatar
           address={address}
-          ensImage={ensAvatar}
+          ensImage={ensAvatar ?? undefined}
           size={avatarSize}
         />
       )}
