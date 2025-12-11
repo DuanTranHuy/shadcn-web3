@@ -11,15 +11,16 @@ import {
 } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { http } from 'viem';
-import { base, baseSepolia, mainnet } from 'viem/chains';
+import { base, baseSepolia, bsc, mainnet } from 'viem/chains';
 
 const config = createConfig({
-  chains: [mainnet, baseSepolia, base],
+  chains: [mainnet, baseSepolia, base, bsc],
   multiInjectedProviderDiscovery: false,
   transports: {
     [mainnet.id]: http(),
     [baseSepolia.id]: http(),
     [base.id]: http(),
+    [bsc.id]: http(),
   },
 });
 

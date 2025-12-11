@@ -1,8 +1,8 @@
 "use client";
 
-import * as React from "react";
 import { useAccount, useSwitchChain } from "wagmi";
-import { Check, ChevronDown, RefreshCw } from "lucide-react";
+import { NetworkIcon } from "@web3icons/react/dynamic";
+import { Check, ChevronDown, RefreshCw, Globe } from "lucide-react";
 import type { Chain } from "viem";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -16,33 +16,23 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type ChainAttributes = {
-  color: string | [string, string];
-  icon?: React.ReactNode;
+type ChainIconProps = {
+  chainId: number;
+  size?: number;
+  variant?: "branded" | "mono";
+  className?: string;
 };
 
-const NETWORK_COLORS: Record<number, ChainAttributes> = {
-  1: { color: "#627EEA" }, // Mainnet
-  11155111: { color: ["#5f4bb6", "#87ff65"] }, // Sepolia
-  137: { color: "#8247E5" }, // Polygon
-  80002: { color: "#8247E5" }, // Polygon Amoy
-  10: { color: "#FF0420" }, // Optimism
-  11155420: { color: "#FF0420" }, // Optimism Sepolia
-  42161: { color: "#28A0F0" }, // Arbitrum
-  421614: { color: "#28A0F0" }, // Arbitrum Sepolia
-  8453: { color: "#0052FF" }, // Base
-  84532: { color: "#0052FF" }, // Base Sepolia
-  31337: { color: "#F6851B" }, // Hardhat/Localhost
-};
-
-function getNetworkColor(chainId: number, isDarkMode: boolean): string {
-  const colorData = NETWORK_COLORS[chainId];
-  if (!colorData) return isDarkMode ? "#ffffff" : "#000000";
-
-  if (Array.isArray(colorData.color)) {
-    return isDarkMode ? colorData.color[1] : colorData.color[0];
-  }
-  return colorData.color;
+function ChainIcon({ chainId, size = 16, variant = "branded", className }: ChainIconProps) {
+  return (
+    <NetworkIcon
+      chainId={chainId}
+      size={size}
+      variant={variant}
+      className={cn("shrink-0", className)}
+      fallback={<Globe className={cn("shrink-0", className)} style={{ width: size, height: size }} />}
+    />
+  );
 }
 
 type NetworkSwitcherProps = {
@@ -83,15 +73,10 @@ function NetworkSwitcher({
         >
           {isPending ? (
             <RefreshCw className="size-4 animate-spin" />
+          ) : currentChain ? (
+            <ChainIcon chainId={currentChain.id} size={16} />
           ) : (
-            <span
-              className="size-2 rounded-full"
-              style={{
-                backgroundColor: currentChain
-                  ? getNetworkColor(currentChain.id, false)
-                  : undefined,
-              }}
-            />
+            <Globe className="size-4" />
           )}
           {showLabel && (
             <span className="max-w-24 truncate">
@@ -108,7 +93,6 @@ function NetworkSwitcher({
         <DropdownMenuSeparator />
         {allowedChains.map((network) => {
           const isCurrentNetwork = currentChain?.id === network.id;
-          const networkColor = getNetworkColor(network.id, false);
 
           return (
             <DropdownMenuItem
@@ -124,18 +108,12 @@ function NetworkSwitcher({
               )}
               disabled={isPending}
             >
-              <span
-                className="size-2 rounded-full shrink-0"
-                style={{ backgroundColor: networkColor }}
-              />
-              <span
-                className="flex-1 truncate"
-                style={{ color: isCurrentNetwork ? networkColor : undefined }}
-              >
+              <ChainIcon chainId={network.id} size={16} />
+              <span className="flex-1 truncate">
                 {network.name}
               </span>
               {isCurrentNetwork && (
-                <Check className="size-4 shrink-0" style={{ color: networkColor }} />
+                <Check className="size-4 shrink-0" />
               )}
             </DropdownMenuItem>
           );
@@ -170,8 +148,6 @@ function NetworkOptions({
   return (
     <div className={cn("flex flex-col gap-1", className)}>
       {availableNetworks.map((network) => {
-        const networkColor = getNetworkColor(network.id, false);
-
         return (
           <Button
             key={network.id}
@@ -187,12 +163,9 @@ function NetworkOptions({
             {isPending ? (
               <RefreshCw className="size-4 animate-spin" />
             ) : (
-              <RefreshCw className="size-4" />
+              <ChainIcon chainId={network.id} size={16} />
             )}
-            <span>
-              Switch to{" "}
-              <span style={{ color: networkColor }}>{network.name}</span>
-            </span>
+            <span>Switch to {network.name}</span>
           </Button>
         );
       })}
@@ -208,8 +181,8 @@ export {
   NetworkSwitcher,
   NetworkOptions,
   NetworkSwitcherSkeleton,
-  getNetworkColor,
-  NETWORK_COLORS,
+  ChainIcon,
   type NetworkSwitcherProps,
   type NetworkOptionsProps,
+  type ChainIconProps,
 };

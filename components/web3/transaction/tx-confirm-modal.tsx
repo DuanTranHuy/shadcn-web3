@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Address } from "@/components/web3/address";
-import { TxButton } from "@/components/web3/tx-button";
+import { TxButton } from "./tx-button";
 import type { TransactionConfig } from "@/hooks/use-transaction";
 
 export type TxConfirmModalProps = {

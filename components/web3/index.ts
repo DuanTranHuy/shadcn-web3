@@ -1,30 +1,47 @@
 // Address components
-export { Address, addressVariants, type AddressProps } from "./address";
-export { BlockieAvatar } from "./blockie-avatar";
+export {
+  Address,
+  addressVariants,
+  BlockieAvatar,
+  type AddressProps,
+} from "./address";
 
 // Network components
 export {
   NetworkSwitcher,
   NetworkOptions,
   NetworkSwitcherSkeleton,
-  getNetworkColor,
-  NETWORK_COLORS,
+  ChainIcon,
   type NetworkSwitcherProps,
   type NetworkOptionsProps,
-} from "./network-switcher";
+  type ChainIconProps,
+} from "./network";
 
 // Transaction components
-export { TxButton, type TxButtonProps } from "./tx-button";
 export {
+  TxButton,
   TxExplorerLink,
   txExplorerLinkVariants,
+  TxConfirmModal,
+  TxStatusModal,
+  Transfer,
   BLOCK_EXPLORERS,
   getExplorerUrl,
-  type TxExplorerLinkProps,
-} from "./tx-explorer-link";
-export { TxConfirmModal, type TxConfirmModalProps } from "./tx-confirm-modal";
-export {
-  TxStatusModal,
   getErrorMessage,
+  type TxButtonProps,
+  type TxExplorerLinkProps,
+  type TxConfirmModalProps,
   type TxStatusModalProps,
-} from "./tx-status-modal";
+} from "./transaction";
+
+// Input components
+export {
+  BaseInput,
+  AddressInput,
+  NativeCurrencyInput,
+  EtherInput,
+  type CommonInputProps,
+  type AddressInputProps,
+  type NativeCurrencyInputProps,
+  type EtherInputProps,
+} from "./input";

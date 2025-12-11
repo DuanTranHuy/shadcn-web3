@@ -18,7 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { TxExplorerLink } from "@/components/web3/tx-explorer-link";
+import { TxExplorerLink } from "./tx-explorer-link";
 import type { TransactionStatus } from "@/hooks/use-transaction";
 
 export type TxStatusModalProps = {
