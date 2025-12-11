@@ -4,6 +4,7 @@ import * as React from "react";
 import { useEnsName, useEnsAvatar } from "wagmi";
 import { mainnet } from "viem/chains";
 import { normalize } from "viem/ens";
+import { useCopyToClipboard } from "usehooks-ts";
 import { Check, Copy, ExternalLink } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
@@ -73,18 +74,13 @@ function AddressCopyButton({
   address: string;
   iconSize: string;
 }) {
-  const [copied, setCopied] = React.useState(false);
+  const [copiedValue, copy] = useCopyToClipboard();
+  const copied = copiedValue === address;
 
-  const handleCopy = async (e: React.MouseEvent) => {
+  const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    try {
-      await navigator.clipboard.writeText(address);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch (err) {
-      console.error("Failed to copy address:", err);
-    }
+    copy(address);
   };
 
   return (

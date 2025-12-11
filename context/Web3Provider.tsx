@@ -11,16 +11,15 @@ import {
 } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { http } from 'viem';
-import { base, baseSepolia, mainnet } from 'viem/chains';
+import { TARGET_NETWORKS } from '@/config/networks';
 
 const config = createConfig({
-  chains: [mainnet, baseSepolia, base],
+  chains: TARGET_NETWORKS,
   multiInjectedProviderDiscovery: false,
-  transports: {
-    [mainnet.id]: http(),
-    [baseSepolia.id]: http(),
-    [base.id]: http(),
-  },
+  transports: TARGET_NETWORKS.reduce((acc, chain) => {
+    acc[chain.id] = http();
+    return acc;
+  }, {} as Record<number, ReturnType<typeof http>>),
 });
 
 const queryClient = new QueryClient();
