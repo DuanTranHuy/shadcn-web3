@@ -173,51 +173,39 @@ export function AddressInput({
     }
   }, [value, ensAddress]);
 
-  // Determine what to show in prefix
+  // Prefix always shows blockie avatar for resolved address, plus ENS name if available
   const prefixContent = React.useMemo(() => {
-    if (isLoading) {
+    if (isLoading || isEnsAvatarLoading) {
       return (
         <div className="flex items-center gap-2 bg-muted rounded-l-md px-2 py-1 -ml-px border-r">
           <div className="size-6 rounded-full bg-muted-foreground/20 animate-pulse" />
-          <Loader2 className="size-4 animate-spin text-muted-foreground" />
+          {isLoading && <Loader2 className="size-4 animate-spin text-muted-foreground" />}
         </div>
       );
     }
 
-    if (ensName || enteredEnsName) {
+    if (resolvedAddress) {
       return (
         <div className="flex items-center gap-2 bg-muted rounded-l-md px-2 py-1 -ml-px border-r">
-          {isEnsAvatarLoading ? (
-            <div className="size-6 rounded-full bg-muted-foreground/20 animate-pulse" />
-          ) : resolvedAddress ? (
-            <BlockieAvatar
-              address={resolvedAddress}
-              ensImage={ensAvatar ?? undefined}
-              size={24}
-            />
-          ) : null}
-          <span className="text-sm text-muted-foreground">
-            {enteredEnsName ?? ensName}
-          </span>
+          <BlockieAvatar
+            address={resolvedAddress}
+            ensImage={ensAvatar ?? undefined}
+            size={24}
+          />
+          {(ensName || enteredEnsName) && (
+            <span className="text-sm text-muted-foreground">
+              {enteredEnsName ?? ensName}
+            </span>
+          )}
         </div>
       );
     }
 
     return null;
-  }, [isLoading, ensName, enteredEnsName, ensAvatar, isEnsAvatarLoading, resolvedAddress]);
+  }, [isLoading, isEnsAvatarLoading, resolvedAddress, ensAvatar, ensName, enteredEnsName]);
 
-  // Suffix shows blockie for resolved address
-  const suffixContent = React.useMemo(() => {
-    if (resolvedAddress && !ensName && !enteredEnsName) {
-      return (
-        <BlockieAvatar
-          address={resolvedAddress}
-          size={24}
-        />
-      );
-    }
-    return null;
-  }, [resolvedAddress, ensName, enteredEnsName]);
+  // No suffix needed - avatar always in prefix
+  const suffixContent = null;
 
   return (
     <BaseInput<string>
