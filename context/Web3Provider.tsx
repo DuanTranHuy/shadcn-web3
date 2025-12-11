@@ -16,12 +16,10 @@ import { TARGET_NETWORKS } from '@/config/networks';
 const config = createConfig({
   chains: TARGET_NETWORKS,
   multiInjectedProviderDiscovery: false,
-  transports: {
-    [TARGET_NETWORKS[0].id]: http(),
-    [TARGET_NETWORKS[1].id]: http(),
-    [TARGET_NETWORKS[2].id]: http(),
-    [TARGET_NETWORKS[3].id]: http(),
-  },
+  transports: TARGET_NETWORKS.reduce((acc, chain) => {
+    acc[chain.id] = http();
+    return acc;
+  }, {} as Record<number, ReturnType<typeof http>>),
 });
 
 const queryClient = new QueryClient();
