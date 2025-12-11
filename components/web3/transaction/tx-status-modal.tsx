@@ -34,8 +34,6 @@ export type TxStatusModalProps = {
   error?: Error | null;
   /** Number of confirmations */
   confirmations?: number;
-  /** Chain ID for explorer link */
-  chainId?: number;
   /** Whether retry is available */
   canRetry?: boolean;
   /** Callback when user clicks retry */
@@ -159,7 +157,6 @@ function TxStatusModal({
   hash,
   error,
   confirmations = 0,
-  chainId,
   canRetry,
   onRetry,
   onClose,
@@ -196,7 +193,7 @@ function TxStatusModal({
                 <span className="text-sm text-muted-foreground">
                   Transaction Hash
                 </span>
-                <TxExplorerLink hash={hash} chainId={chainId} size="xs" />
+                <TxExplorerLink hash={hash} size="xs" />
               </div>
               {status === "success" && confirmations > 0 && (
                 <div className="flex items-center justify-between mt-2 pt-2 border-t">
@@ -258,7 +255,6 @@ function TxStatusModal({
           {hash && status !== "pending" && (
             <TxExplorerLink
               hash={hash}
-              chainId={chainId}
               variant="button"
               label="View Transaction"
             />

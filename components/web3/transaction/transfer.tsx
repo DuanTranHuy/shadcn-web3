@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { isAddress, type Address } from "viem";
-import { useAccount } from "wagmi";
+import { useCurrentChain } from "@/hooks/use-native-currency";
 import { Send } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { TxButton } from "./tx-button";
@@ -34,7 +34,7 @@ export type TransferProps = {
  * ```
  */
 export function Transfer({ className }: TransferProps) {
-  const { isConnected } = useAccount();
+  const { isConnected, nativeCurrency } = useCurrentChain();
 
   const [toAddress, setToAddress] = React.useState<Address | string>("");
   const [amount, setAmount] = React.useState("");
@@ -142,7 +142,7 @@ export function Transfer({ className }: TransferProps) {
             pendingText="Processing..."
           >
             <Send className="size-4 mr-2" />
-            Send ETH
+            Send {nativeCurrency.symbol}
           </TxButton>
         </div>
       </form>
@@ -159,7 +159,7 @@ export function Transfer({ className }: TransferProps) {
         onConfirm={handleConfirm}
         onCancel={tx.cancelTransaction}
         title="Confirm Transfer"
-        description="Review the details before sending ETH."
+        description={`Review the details before sending ${nativeCurrency.symbol}.`}
       />
 
       <TxStatusModal

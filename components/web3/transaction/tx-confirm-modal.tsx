@@ -1,10 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { useAccount, useBalance } from "wagmi";
+import { useBalance } from "wagmi";
+import { useCurrentChain } from "@/hooks/use-native-currency";
 import { formatEther, formatGwei } from "viem";
 import { AlertTriangle, ArrowRight, Fuel, Wallet } from "lucide-react";
-import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -59,11 +59,13 @@ function GasEstimate({
   gasPrice,
   estimatedGasCost,
   isLoading,
+  symbol = "ETH",
 }: {
   estimatedGas?: bigint;
   gasPrice?: bigint;
   estimatedGasCost?: bigint;
   isLoading?: boolean;
+  symbol?: string;
 }) {
   if (isLoading) {
     return (
@@ -86,7 +88,7 @@ function GasEstimate({
         </span>
         <span className="font-mono text-sm">
           {estimatedGasCost
-            ? `~${parseFloat(formatEther(estimatedGasCost)).toFixed(6)} ETH`
+            ? `~${parseFloat(formatEther(estimatedGasCost)).toFixed(6)} ${symbol}`
             : "Unable to estimate"}
         </span>
       </div>
@@ -109,9 +111,11 @@ function GasEstimate({
 function InsufficientFundsWarning({
   balance,
   required,
+  symbol = "ETH",
 }: {
   balance: bigint;
   required: bigint;
+  symbol?: string;
 }) {
   if (balance >= required) return null;
 
@@ -121,7 +125,7 @@ function InsufficientFundsWarning({
       <div>
         <p className="font-medium">Insufficient funds</p>
         <p className="text-xs mt-1">
-          You need {formatEther(required - balance)} more ETH to complete this
+          You need {formatEther(required - balance)} more {symbol} to complete this
           transaction.
         </p>
       </div>
@@ -167,7 +171,8 @@ function TxConfirmModal({
   description = "Review the transaction details before proceeding.",
   children,
 }: TxConfirmModalProps) {
-  const { address } = useAccount();
+  const { address, nativeCurrency } = useCurrentChain();
+
   const { data: balance } = useBalance({
     address,
     query: {
@@ -236,7 +241,7 @@ function TxConfirmModal({
                 Amount
               </span>
               <span className="font-mono font-medium">
-                {formatValue(config.value)} ETH
+                {formatValue(config.value)} {nativeCurrency.symbol}
               </span>
             </div>
 
@@ -248,6 +253,7 @@ function TxConfirmModal({
               gasPrice={gasPrice}
               estimatedGasCost={estimatedGasCost}
               isLoading={isEstimatingGas}
+              symbol={nativeCurrency.symbol}
             />
 
             <Separator />
@@ -256,7 +262,7 @@ function TxConfirmModal({
             <div className="flex items-center justify-between font-medium">
               <span>Total</span>
               <span className="font-mono">
-                ~{parseFloat(formatEther(totalCost)).toFixed(6)} ETH
+                ~{parseFloat(formatEther(totalCost)).toFixed(6)} {nativeCurrency.symbol}
               </span>
             </div>
           </div>
@@ -266,6 +272,7 @@ function TxConfirmModal({
             <InsufficientFundsWarning
               balance={balance.value}
               required={totalCost}
+              symbol={nativeCurrency.symbol}
             />
           )}
 

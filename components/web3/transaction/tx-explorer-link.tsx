@@ -1,25 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { useAccount } from "wagmi";
 import { ExternalLink } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-
-const BLOCK_EXPLORERS: Record<number, { name: string; url: string }> = {
-  1: { name: "Etherscan", url: "https://etherscan.io" },
-  11155111: { name: "Sepolia Etherscan", url: "https://sepolia.etherscan.io" },
-  137: { name: "Polygonscan", url: "https://polygonscan.com" },
-  80002: { name: "Amoy Polygonscan", url: "https://amoy.polygonscan.com" },
-  10: { name: "Optimism Explorer", url: "https://optimistic.etherscan.io" },
-  11155420: { name: "Optimism Sepolia", url: "https://sepolia-optimism.etherscan.io" },
-  42161: { name: "Arbiscan", url: "https://arbiscan.io" },
-  421614: { name: "Arbitrum Sepolia", url: "https://sepolia.arbiscan.io" },
-  8453: { name: "BaseScan", url: "https://basescan.org" },
-  84532: { name: "Base Sepolia", url: "https://sepolia.basescan.org" },
-  31337: { name: "Local Explorer", url: "" },
-};
+import { useCurrentChain, getExplorerTxUrl } from "@/hooks/use-native-currency";
 
 const txExplorerLinkVariants = cva(
   "inline-flex items-center gap-1.5 font-mono transition-colors",
@@ -52,9 +38,7 @@ const iconSizeMap: Record<string, string> = {
 export type TxExplorerLinkProps = VariantProps<typeof txExplorerLinkVariants> & {
   /** Transaction hash */
   hash: `0x${string}`;
-  /** Chain ID (defaults to connected chain) */
-  chainId?: number;
-  /** Custom block explorer URL (overrides default) */
+  /** Custom block explorer URL (overrides chain's default) */
   explorerUrl?: string;
   /** Show the explorer icon */
   showIcon?: boolean;
@@ -68,19 +52,6 @@ export type TxExplorerLinkProps = VariantProps<typeof txExplorerLinkVariants> & 
 
 function truncateHash(hash: string): string {
   return `${hash.slice(0, 10)}...${hash.slice(-8)}`;
-}
-
-function getExplorerUrl(
-  chainId: number | undefined,
-  customUrl?: string
-): { name: string; url: string } | null {
-  if (customUrl) {
-    return { name: "Explorer", url: customUrl };
-  }
-
-  if (!chainId) return null;
-
-  return BLOCK_EXPLORERS[chainId] ?? null;
 }
 
 /**
@@ -98,8 +69,7 @@ function getExplorerUrl(
  */
 function TxExplorerLink({
   hash,
-  chainId: chainIdProp,
-  explorerUrl,
+  explorerUrl: customExplorerUrl,
   variant = "default",
   size = "sm",
   showIcon = true,
@@ -107,14 +77,15 @@ function TxExplorerLink({
   label,
   className,
 }: TxExplorerLinkProps) {
-  const { chain } = useAccount();
-  const chainId = chainIdProp ?? chain?.id;
-
-  const explorer = getExplorerUrl(chainId, explorerUrl);
+  const { blockExplorer } = useCurrentChain();
   const iconSize = iconSizeMap[size ?? "sm"];
 
+  // Use custom URL if provided, otherwise use chain's default explorer
+  const explorerUrl = customExplorerUrl ?? blockExplorer.url;
+  const explorerName = customExplorerUrl ? "Explorer" : blockExplorer.name;
+
   const displayText = label ?? (truncate ? truncateHash(hash) : hash);
-  const txUrl = explorer?.url ? `${explorer.url}/tx/${hash}` : undefined;
+  const txUrl = explorerUrl ? getExplorerTxUrl(explorerUrl, hash) : undefined;
 
   // Button variant
   if (variant === "button") {
@@ -133,7 +104,7 @@ function TxExplorerLink({
           className={!txUrl ? "pointer-events-none opacity-50" : undefined}
         >
           {showIcon && <ExternalLink className="size-4" />}
-          {label ?? `View on ${explorer?.name ?? "Explorer"}`}
+          {label ?? `View on ${explorerName}`}
         </a>
       </Button>
     );
@@ -167,9 +138,4 @@ function TxExplorerLink({
   );
 }
 
-export {
-  TxExplorerLink,
-  txExplorerLinkVariants,
-  BLOCK_EXPLORERS,
-  getExplorerUrl,
-};
+export { TxExplorerLink, txExplorerLinkVariants };

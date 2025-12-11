@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import { parseEther, formatEther } from "viem";
-import { useBalance, useAccount, useChainId, useChains } from "wagmi";
+import { useBalance } from "wagmi";
+import { useCurrentChain } from "@/hooks/use-native-currency";
 import { TokenIcon } from "@web3icons/react/dynamic";
 import { Coins } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -78,17 +79,7 @@ export function NativeCurrencyInput({
   showMaxButton = true,
   className,
 }: NativeCurrencyInputProps) {
-  const { address, isConnected } = useAccount();
-  const chainId = useChainId();
-  const chains = useChains();
-
-  // Get the current chain's native currency
-  const currentChain = chains.find((c) => c.id === chainId);
-  const nativeCurrency = currentChain?.nativeCurrency ?? {
-    name: "Ether",
-    symbol: "ETH",
-    decimals: 18,
-  };
+  const { address, isConnected, nativeCurrency } = useCurrentChain();
 
   const { data: balance } = useBalance({
     address,

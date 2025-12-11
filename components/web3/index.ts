@@ -25,8 +25,6 @@ export {
   TxConfirmModal,
   TxStatusModal,
   Transfer,
-  BLOCK_EXPLORERS,
-  getExplorerUrl,
   getErrorMessage,
   type TxButtonProps,
   type TxExplorerLinkProps,

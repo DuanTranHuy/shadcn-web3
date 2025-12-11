@@ -1,6 +1,6 @@
 "use client";
 
-import { useAccount, useSwitchChain } from "wagmi";
+import { useConnection, useSwitchChain } from "wagmi";
 import { NetworkIcon } from "@web3icons/react/dynamic";
 import { Check, ChevronDown, RefreshCw, Globe } from "lucide-react";
 import type { Chain } from "viem";
@@ -48,7 +48,7 @@ function NetworkSwitcher({
   showLabel = true,
   align = "end",
 }: NetworkSwitcherProps) {
-  const { chain, isConnected } = useAccount();
+  const { chain, isConnected } = useConnection();
   const { switchChain, isPending } = useSwitchChain();
 
   if (!isConnected) {
@@ -134,7 +134,7 @@ function NetworkOptions({
   onNetworkChange,
   className,
 }: NetworkOptionsProps) {
-  const { chain } = useAccount();
+  const { chain } = useConnection();
   const { switchChain, isPending } = useSwitchChain();
 
   const availableNetworks = allowedChains.filter(
