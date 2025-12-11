@@ -25,7 +25,7 @@ function NativeTokenIcon({ symbol, size = 16, variant = "branded", className }: 
       size={size}
       variant={variant}
       className={cn("shrink-0", className)}
-      fallback={<Coins className={cn("shrink-0", className)} style={{ width: size, height: size }} />}
+      fallback={<Coins className={cn("shrink-0", className)} size={size} />}
     />
   );
 }
