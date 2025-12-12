@@ -1,8 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-    serverExternalPackages: ['pino-pretty', 'lokijs', 'encoding'],
+  serverExternalPackages: ['pino-pretty', 'lokijs', 'encoding'],
+  webpack: (config) => {
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      '@react-native-async-storage/async-storage': false,
+      'pino-pretty': false,
+    };
+    return config;
+  },
 };
 
 export default nextConfig;
