@@ -43,11 +43,3 @@ export {
   type NativeCurrencyInputProps,
   type EtherInputProps,
 } from "./input";
-
-// Wallet components
-export {
-  ConnectWallet,
-  WalletConnectModal,
-  type ConnectWalletProps,
-  type WalletConnectModalProps,
-} from "./wallet";
