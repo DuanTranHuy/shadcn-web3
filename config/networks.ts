@@ -1,4 +1,4 @@
-import { base, baseSepolia, bsc, mainnet } from "viem/chains";
+import { base, baseSepolia, bsc, mainnet } from "wagmi/chains";
 import type { Chain } from "viem";
 
 /**

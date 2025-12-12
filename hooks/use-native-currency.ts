@@ -1,6 +1,6 @@
 "use client";
 
-import { useChainId, useChains, useConnection } from "wagmi";
+import { useChainId, useChains, useAccount } from "wagmi";
 
 /**
  * Native currency information
@@ -55,7 +55,7 @@ export function useNativeCurrency(): NativeCurrency {
 /**
  * Hook to get the current chain with connection info, native currency, and explorer
  *
- * Combines useConnection with chain info for convenience.
+ * Combines useAccount with chain info for convenience.
  *
  * @example
  * ```tsx
@@ -71,7 +71,7 @@ export function useNativeCurrency(): NativeCurrency {
  * ```
  */
 export function useCurrentChain() {
-  const { address, isConnected, chain } = useConnection();
+  const { address, isConnected, chain } = useAccount();
   const nativeCurrency = chain?.nativeCurrency ?? DEFAULT_NATIVE_CURRENCY;
   const blockExplorer = chain?.blockExplorers?.default ?? DEFAULT_BLOCK_EXPLORER;
 

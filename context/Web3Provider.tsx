@@ -1,44 +1,30 @@
-'use client';
+"use client";
 
-import {
-  DynamicContextProvider,
-} from '@dynamic-labs/sdk-react-core';
-import { EthereumWalletConnectors } from '@dynamic-labs/ethereum';
-import { DynamicWagmiConnector } from '@dynamic-labs/wagmi-connector';
-import {
-  createConfig,
-  WagmiProvider,
-} from 'wagmi';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { http } from 'viem';
-import { TARGET_NETWORKS } from '@/config/networks';
+import { cookieToInitialState, State, WagmiProvider } from "wagmi";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-const config = createConfig({
-  chains: TARGET_NETWORKS,
-  multiInjectedProviderDiscovery: false,
-  transports: TARGET_NETWORKS.reduce((acc, chain) => {
-    acc[chain.id] = http();
-    return acc;
-  }, {} as Record<number, ReturnType<typeof http>>),
-});
+import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import { config } from "@/lib/wagmi";
+
+const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
 
 const queryClient = new QueryClient();
 
-export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
+export const Web3Provider = ({
+  children,
+  cookies,
+}: {
+  children: React.ReactNode;
+  cookies: string | null;
+}) => {
+  const initialState = cookies
+    ? cookieToInitialState(config, cookies)
+    : undefined;
   return (
-    <DynamicContextProvider
-      settings={{
-        environmentId: process.env.NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID!,
-        walletConnectors: [EthereumWalletConnectors],
-      }}
-    >
-      <WagmiProvider config={config}>
-        <QueryClientProvider client={queryClient}>
-          <DynamicWagmiConnector>
-            {children}
-          </DynamicWagmiConnector>
-        </QueryClientProvider>
-      </WagmiProvider>
-    </DynamicContextProvider>
+    <WagmiProvider config={config} initialState={initialState}>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider>{children}</RainbowKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
-}
+};
