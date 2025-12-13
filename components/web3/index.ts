@@ -43,3 +43,13 @@ export {
   type NativeCurrencyInputProps,
   type EtherInputProps,
 } from "./input";
+
+// Connect components
+export {
+  CustomConnectButton,
+  ChainSwitchButton,
+  AccountInfoButton,
+  ConnectWalletButton,
+  AccountModal,
+  ChainModal,
+} from "./connect";
