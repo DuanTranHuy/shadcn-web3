@@ -1,3 +1,5 @@
+"use client";
+
 import { AccountInfo } from "@/components/account-info";
 import { ConnectKitButton } from "connectkit";
 
