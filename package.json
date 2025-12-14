@@ -69,6 +69,7 @@
     "@types/node": "^24.10.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@wagmi/cli": "^2.8.0",
     "eslint": "^9",
     "eslint-config-next": "16.0.8",
     "tailwindcss": "^4",
